@@ -9,7 +9,6 @@ import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.LocalContext
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.provideContent
 import androidx.glance.layout.Alignment
@@ -18,7 +17,6 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.text.Text
-import com.hexagon.widgetdemoapp.R
 import java.util.Calendar
 
 private fun isLeapYear(year: Int): Boolean {
@@ -29,60 +27,84 @@ class SimpleWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            SimpleWidgetContent(LocalContext.current)
+            SimpleWidgetContent()
         }
     }
 
+    @Composable
+    private fun SimpleWidgetContent() {
+        val cal = Calendar.getInstance()
+        val currentYear = cal.get(Calendar.YEAR)
+        val dayOfYear = cal.get(Calendar.DAY_OF_YEAR)
+        val isLeap = isLeapYear(currentYear)
+        val daysInYear = if (isLeap) 366 else 365
 
-        @Composable
-        private fun SimpleWidgetContent(context: Context) {
-            val cal = Calendar.getInstance()
-            val currentYear = cal.get(Calendar.YEAR)
-            val dayOfYear = cal.get(Calendar.DAY_OF_YEAR)
-            val daysInYear = if (isLeapYear(currentYear)) 366 else 365
+        val bitmap = remember(dayOfYear, isLeap) {
+            val daysInMonths =
+                intArrayOf(31, if (isLeap) 29 else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
-            val bitmap = remember(daysInYear, dayOfYear) {
-                val size = 400
-                val bitmap = createBitmap(size, size)
-                val canvas = android.graphics.Canvas(bitmap)
+            val width = 620 // Add space for labels
+            val height = 280 // Add space for labels
+            val labelPadding = 40f
 
-                val columns = 28
-                val cellSize = size / columns.toFloat()
-                val paint = android.graphics.Paint()
+            val bitmap = createBitmap(width, height)
+            val canvas = android.graphics.Canvas(bitmap)
+            val paint = android.graphics.Paint()
 
-                var counter = 0
-                for (row in 0 until (daysInYear / columns + 1)) {
-                    for (col in 0 until columns) {
-                        if (counter < daysInYear) {
-                            counter++
-                            paint.color = when {
-                                counter < dayOfYear -> android.graphics.Color.GRAY
-                                counter == dayOfYear -> android.graphics.Color.GREEN
-                                else -> android.graphics.Color.LTGRAY
-                            }
+            val gridWidth = width - labelPadding
+            val gridHeight = height - labelPadding
+            val cellWidth = gridWidth / 31f
+            val cellHeight = gridHeight / 12f
+            var dayCounter = 0
 
-                            val left = col * cellSize + 2f
-                            val top = row * cellSize + 2f
-                            canvas.drawRect(left, top, left + cellSize - 4f, top + cellSize - 4f,
-                                paint
-                            )
-                        }
+            paint.textAlign = android.graphics.Paint.Align.CENTER
+            paint.textSize = 12f
+            paint.color = android.graphics.Color.WHITE
+
+            // Draw month labels (1-12)
+            for (month in 0..11) {
+                val textY = labelPadding + month * cellHeight + cellHeight / 2 - (paint.descent() + paint.ascent()) / 2
+                canvas.drawText((month + 1).toString(), labelPadding / 2, textY, paint)
+            }
+
+            // Draw day labels (1-31)
+            for (day in 1..31) {
+                val textX = labelPadding + (day - 1) * cellWidth + cellWidth / 2
+                canvas.drawText(day.toString(), textX, labelPadding / 2, paint)
+            }
+
+            for (month in 0..11) { // 12 months (rows)
+                val daysInCurrentMonth = daysInMonths[month]
+                for (day in 1..daysInCurrentMonth) { // days in month (columns)
+                    dayCounter++
+
+                    paint.color = when {
+                        dayCounter < dayOfYear -> android.graphics.Color.DKGRAY
+                        dayCounter == dayOfYear -> android.graphics.Color.GRAY
+                        else -> android.graphics.Color.LTGRAY
                     }
+
+                    val left = labelPadding + (day - 1) * cellWidth + 1f
+                    val top = labelPadding + month * cellHeight + 1f
+                    val right = left + cellWidth - 2f
+                    val bottom = top + cellHeight - 2f
+                    canvas.drawRect(left, top, right, bottom, paint)
                 }
-                bitmap
             }
-
-            Column(
-                modifier = GlanceModifier.fillMaxSize().padding(8.dp),
-                horizontalAlignment = Alignment.Horizontal.CenterHorizontally
-            ) {
-                Text(text = "$currentYear: $daysInYear days")
-
-                Image(
-                    provider = ImageProvider(bitmap),
-                    contentDescription = "Year Grid",
-                    modifier = GlanceModifier.fillMaxWidth().defaultWeight()
-                )
-            }
+            bitmap
         }
+
+        Column(
+            modifier = GlanceModifier.fillMaxSize().padding(8.dp),
+            horizontalAlignment = Alignment.Horizontal.CenterHorizontally
+        ) {
+            Text(text = "$currentYear: $daysInYear days")
+
+            Image(
+                provider = ImageProvider(bitmap),
+                contentDescription = "Year grid with month and day labels",
+                modifier = GlanceModifier.fillMaxWidth().defaultWeight()
+            )
+        }
+    }
 }
