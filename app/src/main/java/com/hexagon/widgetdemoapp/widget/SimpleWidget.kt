@@ -16,8 +16,9 @@ import androidx.glance.layout.Column
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
-import androidx.glance.text.Text
 import java.util.Calendar
+import kotlin.math.min
+import androidx.core.graphics.toColorInt
 
 private fun isLeapYear(year: Int): Boolean {
     return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
@@ -34,10 +35,9 @@ class SimpleWidget : GlanceAppWidget() {
     @Composable
     private fun SimpleWidgetContent() {
         val cal = Calendar.getInstance()
-        val currentYear = cal.get(Calendar.YEAR)
         val dayOfYear = cal.get(Calendar.DAY_OF_YEAR)
+        val currentYear = cal.get(Calendar.YEAR)
         val isLeap = isLeapYear(currentYear)
-        val daysInYear = if (isLeap) 366 else 365
 
         val bitmap = remember(dayOfYear, isLeap) {
             val daysInMonths =
@@ -79,27 +79,24 @@ class SimpleWidget : GlanceAppWidget() {
                     dayCounter++
 
                     paint.color = when {
-                        dayCounter < dayOfYear -> android.graphics.Color.DKGRAY
-                        dayCounter == dayOfYear -> android.graphics.Color.GRAY
-                        else -> android.graphics.Color.LTGRAY
+                        dayCounter < dayOfYear -> "#1565C0".toColorInt() // Past
+                        dayCounter == dayOfYear -> "#64B5F6".toColorInt() // Present
+                        else -> "#E3F2FD".toColorInt() // Future
                     }
 
-                    val left = labelPadding + (day - 1) * cellWidth + 1f
-                    val top = labelPadding + month * cellHeight + 1f
-                    val right = left + cellWidth - 2f
-                    val bottom = top + cellHeight - 2f
-                    canvas.drawRect(left, top, right, bottom, paint)
+                    val cx = labelPadding + (day - 1) * cellWidth + cellWidth / 2f
+                    val cy = labelPadding + month * cellHeight + cellHeight / 2f
+                    val radius = (min(cellWidth, cellHeight) / 2f) - 2f
+                    canvas.drawCircle(cx, cy, radius, paint)
                 }
             }
             bitmap
         }
 
         Column(
-            modifier = GlanceModifier.fillMaxSize().padding(8.dp),
+            modifier = GlanceModifier.fillMaxSize().padding(0.dp),
             horizontalAlignment = Alignment.Horizontal.CenterHorizontally
         ) {
-            Text(text = "$currentYear: $daysInYear days")
-
             Image(
                 provider = ImageProvider(bitmap),
                 contentDescription = "Year grid with month and day labels",
