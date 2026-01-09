@@ -3,6 +3,7 @@ package com.hexagon.widgetdemoapp.widget
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.createBitmap
 import androidx.glance.GlanceId
@@ -19,10 +20,15 @@ import androidx.glance.layout.padding
 import java.util.Calendar
 import kotlin.math.min
 import androidx.core.graphics.toColorInt
+import androidx.glance.background
 
 private fun isLeapYear(year: Int): Boolean {
     return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
 }
+
+//    todo add widget theme, customization, colors, transparency
+
+
 
 class SimpleWidget : GlanceAppWidget() {
 
@@ -94,8 +100,8 @@ class SimpleWidget : GlanceAppWidget() {
         }
 
         Column(
-            modifier = GlanceModifier.fillMaxSize().padding(0.dp),
-            horizontalAlignment = Alignment.Horizontal.CenterHorizontally
+            modifier = GlanceModifier.fillMaxSize().padding(end = 8.dp).background(Color.DarkGray),
+            horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
         ) {
             Image(
                 provider = ImageProvider(bitmap),
