@@ -9,4 +9,4 @@
     android:description="@string/app_name"
     android:previewImage="@drawable/ic_launcher_foreground"
     android:resizeMode="horizontal|vertical"
-    android:widgetCategory="home_screen" />
+    android:widgetCategory="home_screen|keyguard" />
