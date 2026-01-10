@@ -71,5 +71,6 @@ dependencies {
 // For interop APIs with Material 2
     implementation(libs.androidx.glance.material)
     implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.datastore.preferences)
 
 }

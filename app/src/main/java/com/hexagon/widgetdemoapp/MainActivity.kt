@@ -25,20 +25,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hexagon.widgetdemoapp.ui.theme.WidgetDemoAppTheme
 import com.hexagon.widgetdemoapp.widget.MyBg
 import com.hexagon.widgetdemoapp.widget.MyTheme
+import com.hexagon.widgetdemoapp.widget.getSettingsFlow
+import com.hexagon.widgetdemoapp.widget.saveBackground
+import com.hexagon.widgetdemoapp.widget.saveTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +58,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun MyScreenPreview() {
@@ -63,15 +66,26 @@ fun MyScreenPreview() {
     }
 }
 
-
 @Composable
 fun MyScreen(modifier: Modifier = Modifier) {
-    var selectedBackground by remember { mutableStateOf(MyBg.entries[0]) }
-    var selectedIconMyTheme by remember { mutableStateOf(MyTheme.entries[0]) }
+    val context = LocalContext.current
+    val settings by getSettingsFlow(context).collectAsState(initial = MyBg.Gray to MyTheme.Blue)
+    val scope = rememberCoroutineScope()
+
+    val onBackgroundSelected: (MyBg) -> Unit = {
+        scope.launch {
+            saveBackground(context, it)
+        }
+    }
+
+    val onIconThemeSelected: (MyTheme) -> Unit = { 
+        scope.launch {
+            saveTheme(context, it)
+        }
+    }
 
     Column(
-        modifier = modifier
-            .fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -81,14 +95,14 @@ fun MyScreen(modifier: Modifier = Modifier) {
             fontWeight = FontWeight.Bold
         )
         ThemeSelector(
-            selectedBackground = selectedBackground,
-            onBackgroundSelected = { selectedBackground = it },
-            selectedIconTheme = selectedIconMyTheme,
-            onIconThemeSelected = { selectedIconMyTheme = it }
+            selectedBackground = settings.first,
+            onBackgroundSelected = onBackgroundSelected,
+            selectedIconTheme = settings.second,
+            onIconThemeSelected = onIconThemeSelected
         )
         PreviewWidget(
-            selectedBackground = selectedBackground,
-            selectedIconTheme = selectedIconMyTheme
+            selectedBackground = settings.first,
+            selectedIconTheme = settings.second
         )
     }
 }
@@ -133,8 +147,10 @@ fun ThemeSelector(
     selectedIconTheme: MyTheme,
     onIconThemeSelected: (MyTheme) -> Unit
 ) {
-    Text("Select Background Color",
-        style = MaterialTheme.typography.titleLarge,)
+    Text(
+        "Select Background Color",
+        style = MaterialTheme.typography.titleLarge,
+    )
 
     BackgroundSelectorView(selectedBackground, onBackgroundSelected)
 
@@ -223,7 +239,7 @@ private fun MyBox(iconTheme: Color, isSelected: Boolean) {
             .clip(RoundedCornerShape(8.dp))
             .background(iconTheme),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         if (isSelected) {
             Icon(
                 imageVector = Icons.Default.Check,
