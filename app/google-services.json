@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "329094249606",
+    "project_id": "widgetdemoapp",
+    "storage_bucket": "widgetdemoapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:329094249606:android:8e3f7eaea197ddbf03a507",
+        "android_client_info": {
+          "package_name": "com.hexagon.widgetdemoapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2DJgOVAtzFg1X9c4mj20UycXy2OxNfkY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

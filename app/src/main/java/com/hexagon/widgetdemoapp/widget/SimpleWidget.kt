@@ -3,7 +3,7 @@ package com.hexagon.widgetdemoapp.widget
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.createBitmap
 import androidx.glance.GlanceId
@@ -19,7 +19,6 @@ import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import java.util.Calendar
 import kotlin.math.min
-import androidx.core.graphics.toColorInt
 import androidx.glance.background
 
 private fun isLeapYear(year: Int): Boolean {
@@ -27,7 +26,6 @@ private fun isLeapYear(year: Int): Boolean {
 }
 
 //    todo add widget theme, customization, colors, transparency
-
 
 
 class SimpleWidget : GlanceAppWidget() {
@@ -44,7 +42,8 @@ class SimpleWidget : GlanceAppWidget() {
         val dayOfYear = cal.get(Calendar.DAY_OF_YEAR)
         val currentYear = cal.get(Calendar.YEAR)
         val isLeap = isLeapYear(currentYear)
-
+        val myTheme = MyTheme.Blue
+        val myBg = MyBg.Gray.color
         val bitmap = remember(dayOfYear, isLeap) {
             val daysInMonths =
                 intArrayOf(31, if (isLeap) 29 else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
@@ -69,7 +68,8 @@ class SimpleWidget : GlanceAppWidget() {
 
             // Draw month labels (1-12)
             for (month in 0..11) {
-                val textY = labelPadding + month * cellHeight + cellHeight / 2 - (paint.descent() + paint.ascent()) / 2
+                val textY =
+                    labelPadding + month * cellHeight + cellHeight / 2 - (paint.descent() + paint.ascent()) / 2
                 canvas.drawText((month + 1).toString(), labelPadding / 2, textY, paint)
             }
 
@@ -84,11 +84,7 @@ class SimpleWidget : GlanceAppWidget() {
                 for (day in 1..daysInCurrentMonth) { // days in month (columns)
                     dayCounter++
 
-                    paint.color = when {
-                        dayCounter < dayOfYear -> "#1565C0".toColorInt() // Past
-                        dayCounter == dayOfYear -> "#64B5F6".toColorInt() // Present
-                        else -> "#E3F2FD".toColorInt() // Future
-                    }
+                    paint.color = myTheme.select(dayCounter, dayOfYear).toArgb()
 
                     val cx = labelPadding + (day - 1) * cellWidth + cellWidth / 2f
                     val cy = labelPadding + month * cellHeight + cellHeight / 2f
@@ -100,7 +96,8 @@ class SimpleWidget : GlanceAppWidget() {
         }
 
         Column(
-            modifier = GlanceModifier.fillMaxSize().padding(end = 8.dp).background(Color.DarkGray),
+            modifier = GlanceModifier.fillMaxSize().padding(end = 8.dp)
+                .background(myBg),
             horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
         ) {
             Image(
