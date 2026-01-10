@@ -37,7 +37,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hexagon.widgetdemoapp.ui.theme.WidgetDemoAppTheme
+import com.hexagon.widgetdemoapp.widget.Day
 import com.hexagon.widgetdemoapp.widget.MyBg
+import com.hexagon.widgetdemoapp.widget.MyBox
 import com.hexagon.widgetdemoapp.widget.MyTheme
 import com.hexagon.widgetdemoapp.widget.getSettingsFlow
 import com.hexagon.widgetdemoapp.widget.saveBackground
@@ -130,15 +132,6 @@ private fun PreviewWidget(
     }
 }
 
-@Composable
-private fun Day(iconColor: Color) {
-    Icon(
-        imageVector = Icons.Default.Circle,
-        contentDescription = null,
-        tint = iconColor,
-        modifier = Modifier.size(10.dp)
-    )
-}
 
 @Composable
 fun ThemeSelector(
@@ -226,27 +219,6 @@ private fun BackgroundSelectorView(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun MyBox(iconTheme: Color, isSelected: Boolean) {
-    Box(
-        modifier = Modifier
-            .padding(8.dp)
-            .size(40.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(iconTheme),
-        contentAlignment = Alignment.Center
-    ) {
-        if (isSelected) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = null,
-                tint = Color.LightGray,
-                modifier = Modifier.size(20.dp)
-            )
         }
     }
 }
