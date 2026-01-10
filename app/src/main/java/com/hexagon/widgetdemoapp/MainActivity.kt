@@ -165,7 +165,7 @@ private fun ThemeSelectorView(
                 )
                 .border(
                     width = if (isSelected) 3.dp else 0.dp,
-                    color = if (isSelected) Color.Black else Color.Transparent,
+                    color = if (isSelected) Color.LightGray else Color.Transparent,
                     shape = RoundedCornerShape(8.dp)
                 ),
             verticalAlignment = Alignment.CenterVertically
@@ -197,7 +197,7 @@ private fun BackgroundSelectorView(
                     )
                     .border(
                         width = if (isSelected) 3.dp else 0.dp,
-                        color = if (isSelected) Color.Black else Color.Transparent,
+                        color = if (isSelected) Color.LightGray else Color.Transparent,
                         shape = RoundedCornerShape(8.dp)
                     ),
                 contentAlignment = Alignment.Center
