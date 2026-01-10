@@ -25,7 +25,6 @@ private fun isLeapYear(year: Int): Boolean {
     return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
 }
 
-//    todo add widget theme, customization, colors, transparency
 
 
 class SimpleWidget : GlanceAppWidget() {
