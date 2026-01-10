@@ -16,11 +16,15 @@ object AppSettings {
     val SELECTED_THEME = stringPreferencesKey("selected_theme")
 }
 
-fun getSettingsFlow(context: Context): Flow<Pair<MyBg, MyTheme>> {
+fun getBgFlow(context: Context): Flow<MyBg> {
     return context.dataStore.data.map { preferences ->
-        val background = MyBg.valueOf(preferences[AppSettings.SELECTED_BACKGROUND] ?: MyBg.Gray.name)
-        val theme = MyTheme.valueOf(preferences[AppSettings.SELECTED_THEME] ?: MyTheme.Blue.name)
-        background to theme
+        MyBg.valueOf(preferences[AppSettings.SELECTED_BACKGROUND] ?: MyBg.Gray.name)
+    }
+}
+
+fun getThemeFlow(context: Context): Flow<MyTheme> {
+    return context.dataStore.data.map { preferences ->
+        MyTheme.valueOf(preferences[AppSettings.SELECTED_THEME] ?: MyTheme.Blue.name)
     }
 }
 

@@ -36,12 +36,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.glance.appwidget.updateAll
 import com.hexagon.widgetdemoapp.ui.theme.WidgetDemoAppTheme
 import com.hexagon.widgetdemoapp.widget.Day
 import com.hexagon.widgetdemoapp.widget.MyBg
 import com.hexagon.widgetdemoapp.widget.MyBox
 import com.hexagon.widgetdemoapp.widget.MyTheme
-import com.hexagon.widgetdemoapp.widget.getSettingsFlow
+import com.hexagon.widgetdemoapp.widget.SimpleWidget
+import com.hexagon.widgetdemoapp.widget.getBgFlow
+import com.hexagon.widgetdemoapp.widget.getThemeFlow
 import com.hexagon.widgetdemoapp.widget.saveBackground
 import com.hexagon.widgetdemoapp.widget.saveTheme
 import kotlinx.coroutines.launch
@@ -71,18 +74,21 @@ fun MyScreenPreview() {
 @Composable
 fun MyScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val settings by getSettingsFlow(context).collectAsState(initial = MyBg.Gray to MyTheme.Blue)
     val scope = rememberCoroutineScope()
+    val bg = getBgFlow(context).collectAsState(initial = MyBg.Gray).value
+    val theme = getThemeFlow(context).collectAsState(initial = MyTheme.Blue).value
 
     val onBackgroundSelected: (MyBg) -> Unit = {
         scope.launch {
             saveBackground(context, it)
+            SimpleWidget().updateAll(context)
         }
     }
 
     val onIconThemeSelected: (MyTheme) -> Unit = { 
         scope.launch {
             saveTheme(context, it)
+            SimpleWidget().updateAll(context)
         }
     }
 
@@ -97,14 +103,14 @@ fun MyScreen(modifier: Modifier = Modifier) {
             fontWeight = FontWeight.Bold
         )
         ThemeSelector(
-            selectedBackground = settings.first,
+            selectedBackground = bg,
             onBackgroundSelected = onBackgroundSelected,
-            selectedIconTheme = settings.second,
+            selectedIconTheme = theme,
             onIconThemeSelected = onIconThemeSelected
         )
         PreviewWidget(
-            selectedBackground = settings.first,
-            selectedIconTheme = settings.second
+            selectedBackground = bg,
+            selectedIconTheme = theme
         )
     }
 }
