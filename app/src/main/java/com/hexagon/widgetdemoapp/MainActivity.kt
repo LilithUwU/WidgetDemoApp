@@ -133,9 +133,8 @@ fun ThemeSelector(
     selectedIconTheme: MyTheme,
     onIconThemeSelected: (MyTheme) -> Unit
 ) {
-    Text("Select Background Color", style = MaterialTheme.typography.titleLarge,
-
-        )
+    Text("Select Background Color",
+        style = MaterialTheme.typography.titleLarge,)
 
     BackgroundSelectorView(selectedBackground, onBackgroundSelected)
 
@@ -170,9 +169,9 @@ private fun ThemeSelectorView(
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            MyBox(iconTheme.past)
-            MyBox(iconTheme.present)
-            MyBox(iconTheme.future)
+            MyBox(iconTheme.past, isSelected)
+            MyBox(iconTheme.present, isSelected)
+            MyBox(iconTheme.future, isSelected)
         }
     }
 }
@@ -216,12 +215,22 @@ private fun BackgroundSelectorView(
 }
 
 @Composable
-private fun MyBox(iconTheme: Color) {
+private fun MyBox(iconTheme: Color, isSelected: Boolean) {
     Box(
         modifier = Modifier
             .padding(8.dp)
             .size(40.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(iconTheme)
-    )
+            .background(iconTheme),
+        contentAlignment = Alignment.Center
+    ){
+        if (isSelected) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+                tint = Color.LightGray,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    }
 }
