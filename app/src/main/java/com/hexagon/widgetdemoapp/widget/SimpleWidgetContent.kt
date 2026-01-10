@@ -12,12 +12,15 @@ import androidx.core.graphics.createBitmap
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.action.actionStartActivity
+import androidx.glance.action.clickable
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
+import com.hexagon.widgetdemoapp.MainActivity
 import java.util.Calendar
 import kotlin.math.min
 private fun isLeapYear(year: Int): Boolean {
@@ -36,7 +39,7 @@ fun SimpleWidgetContent(myBg: MyBg, myTheme: MyTheme) {
 
     Column(
         modifier = GlanceModifier.fillMaxSize().padding(end = 8.dp)
-            .background(myBg.color),
+            .background(myBg.color).clickable(actionStartActivity<MainActivity>()),
         horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
     ) {
         Image(
