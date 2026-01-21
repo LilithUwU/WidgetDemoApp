@@ -53,12 +53,6 @@ Tip: If the widget doesn't appear on the lock screen, check:
   - Optional month labels or abbreviations
 - Use RemoteViews to modify widget UI from your update logic. For more advanced visuals, consider using a small Canvas-backed RemoteViews (or shortcut to open the full app for richer visuals).
 
-## Troubleshooting
-- Widget not listed in picker: ensure the app is installed and the widget provider is declared in the manifest.
-- Widget not updating: verify update intervals, background restrictions, and battery optimizations on the device.
-- Grid shows incorrect days for a month: verify leap-year handling in the provider logic.
-- Lock screen widget missing: confirm device supports lock screen widgets, check lock screen settings, and test on a different supported device (Samsung + Google Lock behavior is device-dependent).
-
 ## Contributing
 Contributions are welcome. Please open an issue to discuss major changes or submit a pull request with a clear description and tests where appropriate.
 
